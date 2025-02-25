@@ -6,12 +6,12 @@ const app = express();
 app.use(cors());
 app.use(express.json()); 
 
-
 const db = mysql.createConnection({
-    host: "localhost",
-    user: "root", 
-    password: "",  
-    database: "fogado"
+    host: "127.0.0.1", 
+    user: "root",
+    password: "",      
+    database: "fogado",
+    port: 3307      
 });
 
 
@@ -30,9 +30,9 @@ app.listen(3001, () => {
 
 
 
-// 1️⃣ Összes szoba listázása
+// Az Összes szoba listázása
 app.get("/szobak", (req, res) => {
-    const sql = "SELECT * FROM szobak";  // A megfelelő táblanév kell ide
+    const sql = "SELECT * FROM szobak"; 
     db.query(sql, (err, results) => {
         if (err) {
             return res.status(500).json({ error: err.message });
@@ -41,10 +41,10 @@ app.get("/szobak", (req, res) => {
     });
 });
 
-// 2️⃣ Egy adott szoba foglaltságának lekérése
-app.get("/foglalasok/:szobaId", (req, res) => {
+// Egy adott szoba foglaltságának lekérése
+app.get("/foglalasok/:szazon", (req, res) => {
     const { szobaId } = req.params;
-    const sql = "SELECT * FROM foglalasok WHERE szoba_id = ?";
+    const sql = "SELECT * FROM foglalasok WHERE szazon = ?";
     db.query(sql, [szobaId], (err, results) => {
         if (err) {
             return res.status(500).json({ error: err.message });
@@ -53,7 +53,7 @@ app.get("/foglalasok/:szobaId", (req, res) => {
     });
 });
 
-// 3️⃣ Új foglalás létrehozása
+// Új foglalás létrehozása
 app.post("/foglalas", (req, res) => {
     const { szoba_id, kezdet, vege, vendeg_nev } = req.body;
     const sql = "INSERT INTO foglalasok (szoba_id, kezdet, vege, vendeg_nev) VALUES (?, ?, ?, ?)";
